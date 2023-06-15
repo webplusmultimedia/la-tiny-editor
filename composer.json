@@ -17,8 +17,9 @@
     ],
     "require": {
         "php": "^8.1",
+        "illuminate/contracts": "^10.0",
         "spatie/laravel-package-tools": "^1.14.0",
-        "illuminate/contracts": "^10.0"
+        "webplusmultimedia/little-admin-architect": "dev-main"
     },
     "require-dev": {
         "laravel/pint": "^1.0",
@@ -34,8 +35,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Webplusmultimedia\\LaTinyEditor\\": "src/",
-            "Webplusmultimedia\\LaTinyEditor\\Database\\Factories\\": "database/factories/"
+            "Webplusmultimedia\\LaTinyEditor\\": "src/"
         }
     },
     "autoload-dev": {
@@ -61,10 +61,7 @@
         "laravel": {
             "providers": [
                 "Webplusmultimedia\\LaTinyEditor\\LaTinyEditorServiceProvider"
-            ],
-            "aliases": {
-                "LaTinyEditor": "Webplusmultimedia\\LaTinyEditor\\Facades\\LaTinyEditor"
-            }
+            ]
         }
     },
     "minimum-stability": "dev",
