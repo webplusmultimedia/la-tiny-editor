@@ -21,7 +21,7 @@ class TinyEditor extends AbstractComponent
 
     protected function setViewPath(): string
     {
-        return 'la-tiny-editor';
+        return 'tiny-editor';
     }
 
     protected function setUp(Field $field): void
