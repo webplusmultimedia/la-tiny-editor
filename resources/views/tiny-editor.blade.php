@@ -23,14 +23,17 @@
                          {{ $attributes->class('')->merge(['class'=> $field->getColSpan()]) }}
                          x-data="{ errors : $wire.__instance.errors}"
     >
-        <x-dynamic-component :component="$field->getViewComponentForLabel()" :id="$id" class="form-label" :label="$field->getLabel()"
-                             :showRequired="$field->isRequired()"/>
+        <x-dynamic-component :component="$field->getViewComponentForLabel()"
+                             :id="$id" class="form-label"
+                             :label="$field->getLabel()"
+                             :showRequired="$field->isRequired()"
+        />
         <div>
             <div
                 x-data="tinimce({
-    state : $wire.entangle(@js($field->getWireName())){{ $field->getWireModifier() }},
-    settings : @js($field->getSettings())
-    })"
+                    state : $wire.entangle(@js($field->getWireName())){{ $field->getWireModifier() }},
+                    settings : @js($field->getSettings())
+                })"
                 x-cloak
                 wire:ignore>
                 <textarea x-ref="tinytextarea"></textarea>
