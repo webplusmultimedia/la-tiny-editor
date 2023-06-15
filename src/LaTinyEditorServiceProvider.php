@@ -14,6 +14,7 @@ class LaTinyEditorServiceProvider extends PackageServiceProvider
         $package
             ->name('la-tiny-editor')
             ->hasConfigFile()
+            ->hasAssets()
             ->hasViews();
     }
 }
