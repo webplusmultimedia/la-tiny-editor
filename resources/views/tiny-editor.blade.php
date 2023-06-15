@@ -2,8 +2,6 @@
     /** @var LaTinyEditor $field */
 
         $id = $field->getId();
-        $prepend = $getPrepend();
-        $append = $getAppend();
         $errorMessage =  $getErrorMessage($errors);
 
 @endphp
