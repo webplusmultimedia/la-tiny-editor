@@ -1,12 +1,14 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+declare(strict_types=1);
+
+namespace Webplusmultimedia\LaTinyEditor\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class LaTinyEditorCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'la-tiny-editor';
 
     public $description = 'My command';
 
