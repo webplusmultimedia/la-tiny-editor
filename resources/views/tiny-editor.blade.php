@@ -93,12 +93,12 @@
                                 const $this = this
 
                                 editor.on('blur', function (e) {
-                                    state = editor.getContent()
+                                    $this.state = editor.getContent()
                                 })
 
                                 editor.on('init', function (e) {
-                                    if (state != null) {
-                                        editor.setContent(state)
+                                    if ($this.state != null) {
+                                        editor.setContent($this.state)
                                     }
                                 })
 
@@ -109,7 +109,7 @@
 
                                 this.$watch('state', function (newstate) {
                                     if (editor.container && newstate !== editor.getContent()) {
-                                        editor.resetContent(newstate || '');
+                                        editor.resetContent(newstate || '')
                                         putCursorToEnd();
                                     }
                                 });
@@ -117,7 +117,7 @@
                         })
                     this.initValue = true
                 },
-
+                state: state,
                 initValue: false,
             }))
         })
