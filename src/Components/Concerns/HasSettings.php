@@ -44,8 +44,8 @@ trait HasSettings
 
     protected function getToolBar(): string
     {
-        if ( ! $toolBar = config('la-tiny-editor::la-tiny-editor.profiles.' . $this->profile . '.toolbar')) {
-            return config('la-tiny-editor::la-tiny-editor.profiles.default.toolbar');
+        if ( ! $toolBar = config('la-tiny-editor.profiles.' . $this->profile . '.toolbar')) {
+            return config('la-tiny-editor.profiles.default.toolbar');
         }
 
         return $toolBar;
@@ -53,8 +53,8 @@ trait HasSettings
 
     protected function getPlugIns(): string
     {
-        if ( ! $plugins = config('la-tiny-editor::la-tiny-editor.profiles.' . $this->profile . '.plugins')) {
-            return config('la-tiny-editor::la-tiny-editor.profiles.default.plugins');
+        if ( ! $plugins = config('la-tiny-editor.profiles.' . $this->profile . '.plugins')) {
+            return config('la-tiny-editor.profiles.default.plugins');
         }
 
         return $plugins;
