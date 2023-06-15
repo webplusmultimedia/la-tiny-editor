@@ -19,6 +19,6 @@ class LaTinyEditor extends Field
 
     public function getFieldView(): string
     {
-        return "la-tiny-editor::{$this->view}";
+        return "la-views::{$this->view}";
     }
 }
