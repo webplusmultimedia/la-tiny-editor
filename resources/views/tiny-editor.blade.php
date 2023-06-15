@@ -1,6 +1,6 @@
-@php use Webplusmultimedia\LaTinyEditor\Components\LaTinyEditor;$field = $getConfig();
+@php use Webplusmultimedia\LaTinyEditor\Components\LaTinyEditor;
     /** @var LaTinyEditor $field */
-
+        $field = $getConfig();
         $id = $field->getId();
         $errorMessage =  $getErrorMessage($errors);
 
