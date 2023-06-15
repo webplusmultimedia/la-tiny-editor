@@ -15,6 +15,7 @@ class TinyEditor extends AbstractComponent
 {
     use HasName;
     use HasValidation;
+
     public function __construct(
         LaTinyEditor $field,
         public ?string $name = null,
