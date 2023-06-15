@@ -85,15 +85,20 @@
                                 return false;
                             },
                             setup: (editor) => {
+                                if(!window.tinySettingsCopy) {
+                                    window.tinySettingsCopy = [];
+                                }
+                                window.tinySettingsCopy.push(editor.settings);
+
                                 const $this = this
 
                                 editor.on('blur', function (e) {
-                                    $this.state = editor.getContent()
+                                    state = editor.getContent()
                                 })
 
                                 editor.on('init', function (e) {
-                                    if ($this.state != null) {
-                                        editor.setContent($this.state)
+                                    if (state != null) {
+                                        editor.setContent(state)
                                     }
                                 })
 
@@ -103,8 +108,8 @@
                                 }
 
                                 this.$watch('state', function (newstate) {
-                                    if (newstate !== editor.getContent()) {
-                                        editor.resetContent(newstate || '')
+                                    if (editor.container && newstate !== editor.getContent()) {
+                                        editor.resetContent(newstate || '');
                                         putCursorToEnd();
                                     }
                                 });
@@ -112,7 +117,7 @@
                         })
                     this.initValue = true
                 },
-                state: state,
+
                 initValue: false,
             }))
         })
