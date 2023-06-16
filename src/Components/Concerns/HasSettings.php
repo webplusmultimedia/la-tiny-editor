@@ -6,6 +6,7 @@ namespace Webplusmultimedia\LaTinyEditor\Components\Concerns;
 
 trait HasSettings
 {
+
     protected array $settings = [
         'plugins' => null,
         'toolBar' => null,
