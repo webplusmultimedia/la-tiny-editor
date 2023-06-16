@@ -31,10 +31,11 @@
                 x-data="{
                     state : $wire.entangle(@js($field->getWireName())){{ $field->getWireModifier() }},
                     initialized: false,
-                    settings : @js($field->getSettings())
+                    settings : @js($field->getSettings()),
+                    name : @js($field->getWireName())
                 }"
                 x-init="(()=>{
-                    window.la_initTyniMce = {
+                    window[name] = {
                                 target: $refs.tinymce,
                                 plugins: settings.plugins,
                                 max_height: settings.height,
@@ -71,7 +72,14 @@
                                     if(!window.tinySettingsCopy) {
                                         window.tinySettingsCopy = [];
                                     }
-                                    window.tinySettingsCopy.push(editor.options);
+                                    let test  = window.tinySettingsCopy.filter((settings)=>{ settings.get('name_init') === editor.options.get('name_init') })
+
+                                    if(!test.length){
+                                        window.tinySettingsCopy.push(editor.options);
+                                    }
+
+                                    editor.options.register('name_init',{ processor : 'string', default : '' })
+                                    editor.options.set('name_init',name)
 
                                     const $this = this
 
@@ -102,16 +110,14 @@
                     $nextTick(() => initTinymce());
                     const initTinymce = ()=>{
                         if (window.tinymce !== undefined && initialized === false){
-                            tinymce.init(window.la_initTyniMce);
+                            tinymce.init(window[name]);
                              initialized = true;
                        }
                     }
                     if (!window.tinyMceInitialized) {
                         window.tinyMceInitialized = true;
                         $nextTick(() => {
-
                             Livewire.hook('element.removed', (el, component) => {
-
                                 if (el.nodeName === 'INPUT' && el.getAttribute('x-ref') === 'tinymce') {
                                     console.log('remove',el)
                                     tinymce.get(el.id)?.remove();
@@ -150,19 +156,15 @@
 
                 if (!isModalOpen /*&& sortableClass.some(i => el.classList.contains(i))*/) {
                    removeEditors();
-                  /*  setTimeout(()=>{
-                        window.tinySettingsCopy.forEach(settings => tinymce.init(window.la_initTyniMce))
-                        console.log('recreate')
-                    }, 1);*/
                 }
             })
 
             const removeEditors = debounce(() => {
                 window.tinySettingsCopy.forEach(i => {
                      tinymce.execCommand('mceRemoveEditor', true, i.get('id'))
-                    tinymce.init(window.la_initTyniMce)
                     setTimeout(()=> {
-                    },2)
+                        tinymce.init(window[i.get('name_init')])
+                    },50)
                 });
             }, 50);
 
