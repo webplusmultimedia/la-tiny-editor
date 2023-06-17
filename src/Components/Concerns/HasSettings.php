@@ -11,6 +11,7 @@ trait HasSettings
         'toolBar' => null,
         'height' => 400,
         'is_forced_root_block' => false,
+        'lang' => 'fr_FR',
     ];
 
     public function getSettings(): array
@@ -20,6 +21,7 @@ trait HasSettings
             'toolBar' => $this->getToolBar(),
             'height' => $this->getHeight(),
             'is_forced_root_block' => $this->isForcedRootBlock(),
+            'lang' => $this->getInterfaceLanguage(),
         ];
     }
 
@@ -67,5 +69,17 @@ trait HasSettings
         }
 
         return 200;
+    }
+
+    protected function getInterfaceLanguage(): string
+    {
+        return $this->language ?? app()->getLocale();
+    }
+
+    public function language(?string $language = null): static
+    {
+        $this->language = $language ?? app()->getLocale();
+
+        return $this;
     }
 }

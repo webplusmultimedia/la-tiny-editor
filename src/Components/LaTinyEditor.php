@@ -17,6 +17,8 @@ class LaTinyEditor extends Field
 
     protected string $profile = 'default';
 
+    protected string $language = 'fr_FR';
+
     public function getFieldView(): string
     {
         return "la-views::{$this->view}";

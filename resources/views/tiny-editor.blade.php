@@ -3,22 +3,20 @@
         $field = $getConfig();
         $id = $field->getId();
         $errorMessage =  $getErrorMessage($errors);
-
 @endphp
 @if($field->isHidden())
-
-        <x-little-anonyme::form-components.fields.partials.hidden-field
-            {{ $attributes->except(['field'])->merge([
-                       'wire:model' . $field->getWireModifier() => $field->getWireName(),
-                       'id' => $id,
-                       'type' => 'hidden',
-                       ])
-            }}
-        />
+    <x-little-anonyme::form-components.fields.partials.hidden-field
+        {{ $attributes->except(['field'])->merge([
+                   'wire:model' . $field->getWireModifier() => $field->getWireName(),
+                   'id' => $id,
+                   'type' => 'hidden',
+                   ])
+        }}
+    />
 @else
     <x-dynamic-component :component="$field->getWrapperView()"
                          :id="$field->getWrapperId()"
-                         {{ $attributes->class('')->merge(['class'=> $field->getColSpan()]) }}
+                         @class(['col-span-full'])
                          x-data="{ errors : $wire.__instance.errors}"
     >
         <x-dynamic-component :component="$field->getViewComponentForLabel()"
@@ -37,6 +35,7 @@
                 x-init="(()=>{
                     window[name] = {
                                 target: $refs.tinymce,
+                                language : settings.lang,
                                 plugins: settings.plugins,
                                 max_height: settings.height,
                                 statusbar: false,
@@ -72,16 +71,10 @@
                                     if(!window.tinySettingsCopy) {
                                         window.tinySettingsCopy = [];
                                     }
-                                    let test  = window.tinySettingsCopy.filter((settings)=>{ settings.get('name_init') === editor.options.get('name_init') })
-
-                                    if(!test.length){
-                                        window.tinySettingsCopy.push(editor.options);
-                                    }
+                                    window.tinySettingsCopy.push(editor.options);
 
                                     editor.options.register('name_init',{ processor : 'string', default : '' })
                                     editor.options.set('name_init',name)
-
-                                    const $this = this
 
                                     editor.on('change', function (e) {
                                         state = editor.getContent()
@@ -126,9 +119,17 @@
                         });
                     }
                 })()"
+                style="min-height: {{ $field->getSettings()['height'] }}px"
                 x-cloak
                 wire:ignore>
-                <input type="hidden" x-ref="tinymce" id="tiny-editor-{{ $id }}" />
+                @unless($field->isDisabled())
+                    <input type="hidden" x-ref="tinymce" id="input-{{ $id }}"/>
+                @else
+                    <div class="w-full rounded-lg border border-gray-300 bg-white p-4 text-sm opacity-70 shadow-sm transition duration-75 "
+                         x-html="state"
+                    >
+                    </div>
+                @endunless
 
             </div>
             <x-dynamic-component :component="$field->getViewComponentForHelperText()" :caption="$field->getHelperText()"/>
@@ -147,24 +148,23 @@
                 'filament-forms-repeater-component',
             ];
 
-            Livewire.hook('element.updated', (el,component) => {
+            Livewire.hook('element.updated', (el, component) => {
                 if (!window.tinySettingsCopy) {
                     return;
                 }
-
                 const isModalOpen = document.body.classList.contains('tox-dialog__disable-scroll');
 
                 if (!isModalOpen /*&& sortableClass.some(i => el.classList.contains(i))*/) {
-                   removeEditors();
+                    removeEditors();
                 }
             })
 
             const removeEditors = debounce(() => {
                 window.tinySettingsCopy.forEach(i => {
-                     tinymce.execCommand('mceRemoveEditor', true, i.get('id'))
-                    setTimeout(()=> {
+                    tinymce.execCommand('mceRemoveEditor', true, i.get('id'))
+                    setTimeout(() => {
                         tinymce.init(window[i.get('name_init')])
-                    },50)
+                    }, 50)
                 });
             }, 50);
 
