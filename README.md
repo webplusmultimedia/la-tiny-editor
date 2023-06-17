@@ -35,7 +35,7 @@ Then, add some profile to use with tinyMce:
 
 ```php
 return [
-    'profile' => [
+    'profiles' => [
     ...
         'myconf' => [
                 'plugins' => 'autolink link code',
