@@ -5,15 +5,11 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/webplusmultimedia/la-tiny-editor/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/webplusmultimedia/la-tiny-editor/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/webplusmultimedia/la-tiny-editor.svg?style=flat-square)](https://packagist.org/packages/webplusmultimedia/la-tiny-editor)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
-
+TinyMce plugin for Little Admin.
+[![S-lection-004.png](https://i.postimg.cc/PJGwsYt3/S-lection-004.png)](https://postimg.cc/dkB1G7Zr)
 ## Support us
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/la-tiny-editor.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/la-tiny-editor)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+Coming soon
 
 ## Installation
 
@@ -23,11 +19,10 @@ You can install the package via composer:
 composer require webplusmultimedia/la-tiny-editor
 ```
 
-You can publish and run the migrations with:
+Publish the assets:
 
 ```bash
-php artisan vendor:publish --tag="la-tiny-editor-migrations"
-php artisan migrate
+php artisan vendor:publish --tag=la-tiny-editor-assets
 ```
 
 You can publish the config file with:
@@ -36,24 +31,40 @@ You can publish the config file with:
 php artisan vendor:publish --tag="la-tiny-editor-config"
 ```
 
-This is the contents of the published config file:
+Then, youcan add some profile to use with tinyMce:
 
 ```php
 return [
+    'profile' => [
+    ...
+        'myconf' => [
+                'plugins' => 'autolink link code',
+                'toolbar' => 'undo redo | bold italic underline | link | removeformat code brbtn',
+            ],
+    ...     
+    ]
 ];
 ```
 
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="la-tiny-editor-views"
-```
-
+ 
 ## Usage
 
+In the resource file of little Admin 
+
 ```php
-$laTinyEditor = new Webplusmultimedia\LaTinyEditor();
-echo $laTinyEditor->echoPhrase('Hello, Webplusmultimedia!');
+public static function getFormSchema(Form $form): Form
+    {
+        return $form
+            ->schema([
+                LaTinyEditor::make('extrait')
+                    ->nullable()
+                    ->profile('myconf')
+                    ->required(),
+                LaTinyEditor::make('texte')
+                    ->nullable()
+                    ->helperText('Texte d\'apprentissage')->required(),
+            ]);
+}
 ```
 
 ## Testing
