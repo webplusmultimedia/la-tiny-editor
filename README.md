@@ -1,4 +1,4 @@
-# Tiny MCE Editor for Little Admin
+# Tiny MCE Editor 6.4.2 for Little Admin
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/webplusmultimedia/la-tiny-editor.svg?style=flat-square)](https://packagist.org/packages/webplusmultimedia/la-tiny-editor)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/webplusmultimedia/la-tiny-editor/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/webplusmultimedia/la-tiny-editor/actions?query=workflow%3Arun-tests+branch%3Amain)
@@ -25,13 +25,13 @@ Publish the assets:
 php artisan vendor:publish --tag=la-tiny-editor-assets
 ```
 
-You can publish the config file with:
+Publish the config file with:
 
 ```bash
 php artisan vendor:publish --tag="la-tiny-editor-config"
 ```
 
-Then, youcan add some profile to use with tinyMce:
+Then, add some profile to use with tinyMce:
 
 ```php
 return [
