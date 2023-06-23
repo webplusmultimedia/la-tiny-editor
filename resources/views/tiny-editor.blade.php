@@ -107,17 +107,17 @@
                              initialized = true;
                        }
                     }
-                    if (!window.tinyMceInitialized) {
+                    /*if (!window.tinyMceInitialized) {
                         window.tinyMceInitialized = true;
                         $nextTick(() => {
                             Livewire.hook('element.removed', (el, component) => {
                                 if (el.nodeName === 'INPUT' && el.getAttribute('x-ref') === 'tinymce') {
-                                    console.log('remove',el)
+
                                     tinymce.get(el.id)?.remove();
                                 }
                             });
                         });
-                    }
+                    }*/
                 })()"
                 style="min-height: {{ $field->getSettings()['height'] }}px"
                 x-cloak
@@ -164,7 +164,7 @@
                     tinymce.execCommand('mceRemoveEditor', true, i.get('id'))
                     setTimeout(() => {
                         tinymce.init(window[i.get('name_init')])
-                    }, 50)
+                    }, 2)
                 });
             }, 50);
 
