@@ -2,6 +2,12 @@
 
 All notable changes to `la-tiny-editor` will be documented in this file.
 
+## fix on refresh - 2023-06-23
+
+##Fix regenerate on livewire update elements
+
+**Full Changelog**: https://github.com/webplusmultimedia/la-tiny-editor/compare/v0.9.1...v0.9.2
+
 ## fix REAME - 2023-06-17
 
 **Full Changelog**: https://github.com/webplusmultimedia/la-tiny-editor/compare/v0.9.0...v0.9.1
