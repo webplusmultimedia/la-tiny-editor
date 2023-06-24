@@ -164,9 +164,9 @@
                     tinymce.execCommand('mceRemoveEditor', true, i.get('id'))
                     setTimeout(() => {
                         tinymce.init(window[i.get('name_init')])
-                    }, 2)
+                    }, 100)
                 });
-            }, 50);
+            }, 100);
 
             const reinitializeEditors = debounce(() => {
                 window.tinySettingsCopy.forEach(settings => tinymce.init(settings))
