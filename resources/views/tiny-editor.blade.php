@@ -24,13 +24,18 @@
                              :label="$field->getLabel()"
                              :showRequired="$field->isRequired()"
         />
-        <div>
+        <div
+            class=" transition"
+            x-bind:class="{
+                            'bg-gray-100' : $store.laDatas.isTinyEditorShow ,
+                            'bg-white' : !$store.laDatas.isTinyEditorShow }"
+        >
             <div
                 x-data="{
                     state : $wire.entangle(@js($field->getWireName())){{ $field->getWireModifier() }},
                     initialized: false,
                     settings : @js($field->getSettings()),
-                    name : @js($field->getWireName())
+                    name : @js($field->getWireName()),
                 }"
                 x-init="(()=>{
                     window[name] = {
@@ -81,6 +86,7 @@
                                     })
 
                                     editor.on('init', function (e) {
+                                        Alpine.store('laDatas').isTinyEditorShow = false
                                         if (state != null) {
                                             editor.setContent(state)
                                         }
@@ -90,16 +96,17 @@
                                         editor.selection.select(editor.getBody(), true);
                                         editor.selection.collapse(false);
                                     }
-console.log('state change')
-                                    $watch('state', function (newstate) {
 
+                                    $watch('state', function (newstate) {
                                         if (editor.getContainer() && newstate !== editor.getContent()) {
+
                                             editor.resetContent(newstate || '')
                                             putCursorToEnd();
                                         }
                                     });
                                 }
                             };
+
                     window.addEventListener('DOMContentLoaded', () => initTinymce());
                     $nextTick(() => initTinymce());
                     const initTinymce = ()=>{
@@ -108,20 +115,23 @@ console.log('state change')
                              initialized = true;
                        }
                     }
+
                     if (!window.tinyMceInitialized) {
                         window.tinyMceInitialized = true;
                         $nextTick(() => {
-                            Livewire.hook('element.removed', (el, component) => {
-                                console.log(component)
+
+                            /*Livewire.hook('element.removed', (el, component) => {
+                                console.log(el)
                                 if (el.nodeName === 'INPUT' && el.getAttribute('x-ref') === 'tinymce') {
 
                                     tinymce.get(el.id)?.remove();
                                 }
-                            });
+                            });*/
                         });
                     }
                 })()"
                 style="min-height: {{ $field->getSettings()['height'] }}px"
+
                 x-cloak
                 wire:ignore>
                 @unless($field->isDisabled())
@@ -150,47 +160,33 @@ console.log('state change')
                 'filament-forms-repeater-component',
             ];
 
+
+
             Livewire.hook('element.updated', (el, component) => {
                 /*if(el.classList.contains('la-file-upload')){
                     console.log('la-file-upload')
                     return;
                 }*/
 
-                if (!window.tinySettingsCopy ) {
+                if (!window.tinySettingsCopy) {
                     return;
                 }
                 const isModalOpen = document.body.classList.contains('tox-dialog__disable-scroll');
 
                 if (!isModalOpen /*&& sortableClass.some(i => el.classList.contains(i))*/) {
-                    /*if (window.tinySettingsCopy.length>80) {
-                        let instanceCopy = []
-                        let tinyCopy = window.tinySettingsCopy.filter((i) => {
-                            if (instanceCopy.find((t_copy, index) => {
-                               return  t_copy.get('id') === i.get('id')
-                            })) {
-                                return false
-                            }
-                            console.log(window.tinySettingsCopy.length,'***')
-                            instanceCopy.push(i)
-                            return true
-                        })
-                        tinyCopy = Array.from(window.tinySettingsCopy)
-                        window.tinySettingsCopy = []
-                        for (let i =1;i<=instanceCopy.length;i++)
-                        window.tinySettingsCopy.push(tinyCopy.pop())
 
-                    }*/
                     removeEditors();
-                    setTimeout(reinitializeEditors,1)
+                    setTimeout(reinitializeEditors, 1)
                 }
 
             })
 
             const removeEditors = debounce(() => {
+                Alpine.store('laDatas').isTinyEditorShow =  true
                 window.tinySettingsCopy.forEach(i => tinymce.execCommand('mceRemoveEditor', false, i.get('id')))
-            }, 50);
+            }, 100);
             const reinitializeEditors = debounce(() => {
-                window.tinySettingsCopy.forEach(settings =>  tinymce.init(window[settings.get('name_init')]))
+                window.tinySettingsCopy.forEach(settings => tinymce.init(window[settings.get('name_init')]))
             });
 
             function debounce(callback, timeout = 100) {
