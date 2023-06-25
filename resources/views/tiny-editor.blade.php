@@ -76,7 +76,7 @@
                                     editor.options.register('name_init',{ processor : 'string', default : '' })
                                     editor.options.set('name_init',name)
 
-                                    editor.on('change', function (e) {
+                                    editor.on('blur', function (e) {
                                         state = editor.getContent()
                                     })
 
@@ -90,9 +90,10 @@
                                         editor.selection.select(editor.getBody(), true);
                                         editor.selection.collapse(false);
                                     }
-
+console.log('state change')
                                     $watch('state', function (newstate) {
-                                        if (editor.container && newstate !== editor.getContent()) {
+
+                                        if (editor.getContainer() && newstate !== editor.getContent()) {
                                             editor.resetContent(newstate || '')
                                             putCursorToEnd();
                                         }
@@ -107,17 +108,18 @@
                              initialized = true;
                        }
                     }
-                    /*if (!window.tinyMceInitialized) {
+                    if (!window.tinyMceInitialized) {
                         window.tinyMceInitialized = true;
                         $nextTick(() => {
                             Livewire.hook('element.removed', (el, component) => {
+                                console.log(component)
                                 if (el.nodeName === 'INPUT' && el.getAttribute('x-ref') === 'tinymce') {
 
                                     tinymce.get(el.id)?.remove();
                                 }
                             });
                         });
-                    }*/
+                    }
                 })()"
                 style="min-height: {{ $field->getSettings()['height'] }}px"
                 x-cloak
@@ -125,7 +127,7 @@
                 @unless($field->isDisabled())
                     <input type="hidden" x-ref="tinymce" id="input-{{ $id }}"/>
                 @else
-                    <div class="w-full rounded-lg border border-gray-300 bg-white p-4 text-sm opacity-70 shadow-sm transition duration-75 "
+                    <div class="la-tiny-mce-html-text"
                          x-html="state"
                     >
                     </div>
@@ -149,27 +151,46 @@
             ];
 
             Livewire.hook('element.updated', (el, component) => {
-                if (!window.tinySettingsCopy) {
+                /*if(el.classList.contains('la-file-upload')){
+                    console.log('la-file-upload')
+                    return;
+                }*/
+
+                if (!window.tinySettingsCopy ) {
                     return;
                 }
                 const isModalOpen = document.body.classList.contains('tox-dialog__disable-scroll');
 
                 if (!isModalOpen /*&& sortableClass.some(i => el.classList.contains(i))*/) {
+                    /*if (window.tinySettingsCopy.length>80) {
+                        let instanceCopy = []
+                        let tinyCopy = window.tinySettingsCopy.filter((i) => {
+                            if (instanceCopy.find((t_copy, index) => {
+                               return  t_copy.get('id') === i.get('id')
+                            })) {
+                                return false
+                            }
+                            console.log(window.tinySettingsCopy.length,'***')
+                            instanceCopy.push(i)
+                            return true
+                        })
+                        tinyCopy = Array.from(window.tinySettingsCopy)
+                        window.tinySettingsCopy = []
+                        for (let i =1;i<=instanceCopy.length;i++)
+                        window.tinySettingsCopy.push(tinyCopy.pop())
+
+                    }*/
                     removeEditors();
+                    setTimeout(reinitializeEditors,1)
                 }
+
             })
 
             const removeEditors = debounce(() => {
-                window.tinySettingsCopy.forEach(i => {
-                    tinymce.execCommand('mceRemoveEditor', true, i.get('id'))
-                    setTimeout(() => {
-                        tinymce.init(window[i.get('name_init')])
-                    }, 100)
-                });
-            }, 100);
-
+                window.tinySettingsCopy.forEach(i => tinymce.execCommand('mceRemoveEditor', false, i.get('id')))
+            }, 50);
             const reinitializeEditors = debounce(() => {
-                window.tinySettingsCopy.forEach(settings => tinymce.init(settings))
+                window.tinySettingsCopy.forEach(settings =>  tinymce.init(window[settings.get('name_init')]))
             });
 
             function debounce(callback, timeout = 100) {
@@ -178,7 +199,6 @@
                     clearTimeout(timer);
                     timer = setTimeout(() => {
                         callback.apply(this, args);
-                        //console.log({args})
                     }, timeout);
                 };
             }
