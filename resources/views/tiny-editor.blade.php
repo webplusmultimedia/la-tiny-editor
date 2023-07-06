@@ -1,8 +1,6 @@
 @php use Webplusmultimedia\LaTinyEditor\Components\LaTinyEditor;
     /** @var LaTinyEditor $field */
-        $field = $getConfig();
         $id = $field->getId();
-        $errorMessage =  $getErrorMessage($errors);
 @endphp
 @if($field->isHidden())
     <x-little-anonyme::form-components.fields.partials.hidden-field
@@ -19,11 +17,12 @@
                          @class(['col-span-full'])
                          x-data="{ errors : $wire.__instance.errors}"
     >
-        <x-dynamic-component :component="$field->getViewComponentForLabel()"
-                             :id="$id" class="form-label"
-                             :label="$field->getLabel()"
-                             :showRequired="$field->isRequired()"
-        />
+        <x-little-anonyme::form-components.fields.partials.label class="form-label"
+                                                                 :id="$id"
+                                                                 :is-required="$field->isRequired()"
+        >
+            {{ $field->getLabel() }}
+        </x-little-anonyme::form-components.fields.partials.label>
         <div
             class=" transition"
             x-bind:class="{
@@ -32,7 +31,7 @@
         >
             <div
                 x-data="{
-                    state : $wire.entangle(@js($field->getWireName())){{ $field->getWireModifier() }},
+                    state : $wire.entangle(@js($field->getWireName())).defer,
                     initialized: false,
                     settings : @js($field->getSettings()),
                     name : @js($field->getWireName()),
@@ -144,8 +143,8 @@
                 @endunless
 
             </div>
-            <x-dynamic-component :component="$field->getViewComponentForHelperText()" :caption="$field->getHelperText()"/>
-            <x-dynamic-component :component="$field->getViewComponentForErrorMessage()" :message="$errorMessage"/>
+            <x-little-anonyme::form-components.fields.partials.helper-text :text="$field->getHelperText()"/>
+            <x-little-anonyme::form-components.fields.partials.error-message :message="$field->getErrorMessage($errors)"/>
         </div>
 
     </x-dynamic-component>

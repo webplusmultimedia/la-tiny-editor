@@ -19,8 +19,4 @@ class LaTinyEditorServiceProvider extends PackageServiceProvider
             ->hasViews();
     }
 
-    public function bootingPackage(): void
-    {
-        Blade::componentNamespace('Webplusmultimedia\\LaTinyEditor\\views', 'la-views');
-    }
 }
