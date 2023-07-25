@@ -19,11 +19,11 @@ class LaTinyEditor extends Field
 
     protected string $language = 'fr_FR';
 
-
     public function getView(): string
     {
         return 'la-tiny-editor::' . $this->view;
     }
+
     public function getFieldView(): string
     {
         return "la-views::{$this->view}";

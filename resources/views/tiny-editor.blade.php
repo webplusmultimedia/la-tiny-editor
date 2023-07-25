@@ -75,10 +75,10 @@
                                     if(!window.tinySettingsCopy) {
                                         window.tinySettingsCopy = [];
                                     }
-                                    window.tinySettingsCopy.push(editor.options);
 
                                     editor.options.register('name_init',{ processor : 'string', default : '' })
                                     editor.options.set('name_init',name)
+                                    window.tinySettingsCopy.push(editor.options);
 
                                     editor.on('blur', function (e) {
                                         state = editor.getContent()
@@ -119,13 +119,15 @@
                         window.tinyMceInitialized = true;
                         $nextTick(() => {
 
-                            /*Livewire.hook('element.removed', (el, component) => {
-                                console.log(el)
+                            Livewire.hook('element.removed', (el, component) => {
+
                                 if (el.nodeName === 'INPUT' && el.getAttribute('x-ref') === 'tinymce') {
+
+                                    window.tinySettingsCopy = window.tinySettingsCopy.filter(options => options.get('name_init') !== tinymce.get(el.id).options.get('name_init'))
 
                                     tinymce.get(el.id)?.remove();
                                 }
-                            });*/
+                            });
                         });
                     }
                 })()"
@@ -170,6 +172,7 @@
                 if (!window.tinySettingsCopy) {
                     return;
                 }
+
                 const isModalOpen = document.body.classList.contains('tox-dialog__disable-scroll');
 
                 if (!isModalOpen /*&& sortableClass.some(i => el.classList.contains(i))*/) {
@@ -182,10 +185,25 @@
 
             const removeEditors = debounce(() => {
                 Alpine.store('laDatas').isTinyEditorShow =  true
-                window.tinySettingsCopy.forEach(i => tinymce.execCommand('mceRemoveEditor', false, i.get('id')))
+                window.tinySettingsCopy.forEach(i => {
+                    try {
+                        tinymce.execCommand('mceRemoveEditor', false, i.get('id'))
+                    }
+                    catch (e) {
+                        console.log(e)
+                    }
+
+                })
             }, 100);
             const reinitializeEditors = debounce(() => {
-                window.tinySettingsCopy.forEach(settings => tinymce.init(window[settings.get('name_init')]))
+                window.tinySettingsCopy.forEach(settings => {
+                    try {
+                        tinymce.init(window[settings.get('name_init')])
+                    }catch (e) {
+                        console.log(e)
+                    }
+
+                })
             });
 
             function debounce(callback, timeout = 100) {
