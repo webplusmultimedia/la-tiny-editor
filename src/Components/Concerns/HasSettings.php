@@ -76,7 +76,7 @@ trait HasSettings
         return $this->language ?? app()->getLocale();
     }
 
-    public function language(?string $language = null): static
+    public function language(string $language = null): static
     {
         $this->language = $language ?? app()->getLocale();
 
