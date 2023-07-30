@@ -26,8 +26,8 @@
         <div
             class=" transition"
             x-bind:class="{
-                            'bg-gray-100' : $store.laDatas.isTinyEditorShow ,
-                            'bg-white' : !$store.laDatas.isTinyEditorShow }"
+                            'bg-gray-100 dark:bg-gray-800' : $store.laDatas.isTinyEditorShow ,
+                            'bg-white dark:bg-gray-800' : !$store.laDatas.isTinyEditorShow }"
         >
             <div
                 x-data="{
@@ -118,13 +118,9 @@
                     if (!window.tinyMceInitialized) {
                         window.tinyMceInitialized = true;
                         $nextTick(() => {
-
                             Livewire.hook('element.removed', (el, component) => {
-
                                 if (el.nodeName === 'INPUT' && el.getAttribute('x-ref') === 'tinymce') {
-
                                     window.tinySettingsCopy = window.tinySettingsCopy.filter(options => options.get('name_init') !== tinymce.get(el.id).options.get('name_init'))
-
                                     tinymce.get(el.id)?.remove();
                                 }
                             });
