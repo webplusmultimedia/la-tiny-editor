@@ -1,4 +1,4 @@
-@php use Webplusmultimedia\LaTinyEditor\Components\LaTinyEditor;
+@php use Webplusmultimedia\LaTinyEditor\Components\LaTinyEditor;use Webplusmultimedia\LittleAdminArchitect\Form\Components\Form;
     /** @var LaTinyEditor $field */
         $id = $field->getId();
 @endphp
@@ -17,12 +17,24 @@
                          @class(['col-span-full'])
                          x-data="{ errors : $wire.__instance.errors}"
     >
-        <x-little-anonyme::form-components.fields.partials.label class="form-label"
-                                                                 :id="$id"
-                                                                 :is-required="$field->isRequired()"
-        >
-            {{ $field->getLabel() }}
-        </x-little-anonyme::form-components.fields.partials.label>
+        <div class="flex items-center justify-between">
+            <x-little-anonyme::form-components.fields.partials.label class="form-label"
+                                                                     :id="$id"
+                                                                     :is-required="$field->isRequired()"
+            >
+                {{ $field->getLabel() }} @if($field->hasTranslated())
+                    ({{ Form::getSelectedTranslateLangue() }})
+                @endif
+            </x-little-anonyme::form-components.fields.partials.label>
+            @if($field->hasTranslated())
+                <x-little-anonyme::form-components.fields.partials.translation-langues/>
+            @endif
+        </div>
+        @if($field->hasTranslated())
+            @foreach(Form::getNotSelectedLanguages() as $langage)
+                <input type="hidden" wire:model="{{ $field->getStatePathForTranslateName($langage) }}">
+            @endforeach
+        @endif
         <div
             class=" transition"
             x-bind:class="{
@@ -31,12 +43,23 @@
         >
             <div
                 x-data="{
-                    state : $wire.entangle(@js($field->getWireName())).defer,
+                    state : $wire.entangle(@js($field->hasTranslated()?$field->getStatePathForTranslateName(Form::getSelectedTranslateLangue()):$field->getStatePath())).defer,
                     initialized: false,
+                    isTranslated : @js($field->hasTranslated()),
                     settings : @js($field->getSettings()),
                     name : @js($field->getWireName()),
+                    newLanguage : @js($field->hasTranslated()?Form::getSelectedTranslateLangue():null),
+                    oldLanguage : null
                 }"
+                wire:ignore
                 x-init="(()=>{
+                    if(isTranslated){
+                        oldLanguage = newLanguage
+                        Livewire.on('change-language',langue=>{
+                            oldLanguage = newLanguage
+                            newLanguage = langue
+                        })
+                    }
                     window[name] = {
                                 target: $refs.tinymce,
                                 language : settings.lang,
@@ -81,14 +104,22 @@
                                     window.tinySettingsCopy.push(editor.options);
 
                                     editor.on('blur', function (e) {
-                                        state = editor.getContent()
+                                        if (!isTranslated){
+                                            state = editor.getContent()
+                                            return
+                                        }
+                                        $wire.set(name + `.${newLanguage}`, editor.getContent(),true)
                                     })
 
                                     editor.on('init', function (e) {
                                         Alpine.store('laDatas').isTinyEditorShow = false
-                                        if (state != null) {
+
+                                        if (state != null && !isTranslated) {
+
                                             editor.setContent(state)
+                                            return
                                         }
+                                        editor.setContent($wire.get(name + `.${newLanguage}`))
                                     })
 
                                     function putCursorToEnd() {
@@ -97,6 +128,7 @@
                                     }
 
                                     $watch('state', function (newstate) {
+
                                         if (editor.getContainer() && newstate !== editor.getContent()) {
 
                                             editor.resetContent(newstate || '')
@@ -130,7 +162,7 @@
                 style="min-height: {{ $field->getSettings()['height'] }}px"
 
                 x-cloak
-                wire:ignore>
+            >
                 @unless($field->isDisabled())
                     <input type="hidden" x-ref="tinymce" id="input-{{ $id }}"/>
                 @else
@@ -158,7 +190,6 @@
             ];
 
 
-
             Livewire.hook('element.updated', (el, component) => {
                 /*if(el.classList.contains('la-file-upload')){
                     console.log('la-file-upload')
@@ -180,12 +211,11 @@
             })
 
             const removeEditors = debounce(() => {
-                Alpine.store('laDatas').isTinyEditorShow =  true
+                Alpine.store('laDatas').isTinyEditorShow = true
                 window.tinySettingsCopy.forEach(i => {
                     try {
                         tinymce.execCommand('mceRemoveEditor', false, i.get('id'))
-                    }
-                    catch (e) {
+                    } catch (e) {
                         console.log(e)
                     }
 
@@ -195,7 +225,7 @@
                 window.tinySettingsCopy.forEach(settings => {
                     try {
                         tinymce.init(window[settings.get('name_init')])
-                    }catch (e) {
+                    } catch (e) {
                         console.log(e)
                     }
 
