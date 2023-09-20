@@ -115,11 +115,11 @@
                                         Alpine.store('laDatas').isTinyEditorShow = false
 
                                         if (state != null && !isTranslated) {
-
                                             editor.setContent(state)
-                                            return
                                         }
-                                        editor.setContent($wire.get(name + `.${newLanguage}`))
+                                        if(isTranslated){
+                                            editor.setContent($wire.get(name + `.${newLanguage}`))
+                                        }
                                     })
 
                                     function putCursorToEnd() {
